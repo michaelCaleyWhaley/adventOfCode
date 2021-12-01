@@ -235,11 +235,11 @@ function useForSets() {
   let previousSet = null;
   for (let i = 1; i < depths.length; i += 1) {
     const currentSet = depths[i] + depths[i + 1] + depths[i + 2];
-    if (previousSet && currentSet > previousSet) {
+    if (previousSet && depths[i + 2] && currentSet > previousSet) {
       noIncrease += 1;
     }
     previousSet = currentSet;
   }
   return noIncrease;
 }
-// console.log(`useForSets(): `, useForSets());
+console.log(`useForSets(): `, useForSets());
