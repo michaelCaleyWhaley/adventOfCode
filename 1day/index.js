@@ -193,6 +193,8 @@ const depths = [
   2642, 2648, 2647, 2646, 2658,
 ];
 
+// PART 1
+
 function useReduce() {
   const depthsResult = depths.reduce(
     (previousValue, currentValue, currentIndex) => {
@@ -224,5 +226,20 @@ function useFor() {
   return noIncrease;
 }
 
-console.log(`useReduce(): `, useReduce());
-console.log(`useFor(): `, useFor());
+// console.log(`useReduce(): `, useReduce());
+// console.log(`useFor(): `, useFor());
+
+// PART 2
+function useForSets() {
+  let noIncrease = 0;
+  let previousSet = null;
+  for (let i = 1; i < depths.length; i += 1) {
+    const currentSet = depths[i] + depths[i + 1] + depths[i + 2];
+    if (previousSet && currentSet > previousSet) {
+      noIncrease += 1;
+    }
+    previousSet = currentSet;
+  }
+  return noIncrease;
+}
+// console.log(`useForSets(): `, useForSets());
