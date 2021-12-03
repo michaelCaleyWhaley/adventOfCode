@@ -1016,24 +1016,9 @@ const rows = [
   "01010",
 ];
 
-const resultx = [
-  null,
-  "11110",
-  null,
-  "10111",
-  "10101",
-  null,
-  null,
-  "11100",
-  "10000",
-  "11001",
-  null,
-  null,
-];
-
 function findMostCommon(targetArray) {
   const filteredArray = targetArray.filter((validRow) => validRow);
-  const results = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const results = targetArray[0].split("").map(() => 0);
   for (let i = 0; i < filteredArray.length; i += 1) {
     const columns = filteredArray[i].split("");
     for (let c = 0; c < columns.length; c += 1) {
@@ -1048,40 +1033,28 @@ function findMostCommon(targetArray) {
   });
 }
 
-function findOxygenRating() {
-  const mutatedRows = [...rows];
-  const columnLength = mutatedRows[0].length;
-  for (let i = 0; i < columnLength; i += 1) {
-    if (mutatedRows.length <= 1) {
-      return mutatedRows[0];
-    }
-    let mostCommon = findMostCommon(mutatedRows)[0];
-    // if (i === 1) {
-    //   console.log(`mostCommon: `, mostCommon);
-    // }
+const ratings = { oxygen: null, scrubber: null };
+function findRating(targetRow, currentColumn) {
+  if (targetRow.length === 1) {
+    console.log(`targetRow[0]: `, targetRow[0]);
+    return;
+  }
 
-    for (let r = 0; r < mutatedRows.length; r += 1) {
-      if (mutatedRows[r]) {
-        const position = mutatedRows[r][i];
+  const column = currentColumn;
+  const mutatedRows = [...targetRow];
+  const mostCommon = findMostCommon(mutatedRows)[column];
 
-        if (i === 1) {
-          console.log(`position: `, position);
-        }
-
-        // if (mutatedRows[r] === "10111") {
-        //   console.log(`mutatedRows: `, mutatedRows);
-
-        //   console.log(`r: `, r);
-        //   console.log(`i: `, i);
-        //   console.log(`mostCommon: `, mostCommon);
-
-        //   console.log(`LOG: `);
-        // }
-        if (position !== mostCommon) {
-          mutatedRows[r] = null;
-        }
-      }
+  for (let i = 0; i < mutatedRows.length; i += 1) {
+    if (mutatedRows[i][column] !== mostCommon) {
+      mutatedRows.splice(i, 1);
     }
   }
+  const isRemaining = mutatedRows.length > 1;
+
+  if (column <= targetRow[0].length) {
+    findRating(mutatedRows, column + 1);
+  } else if (isRemaining) {
+    findRating(mutatedRows, 0);
+  }
 }
-findOxygenRating();
+findRating(rows, 0);
