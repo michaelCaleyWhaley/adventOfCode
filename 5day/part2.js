@@ -515,39 +515,45 @@ const coordinates = [
 // ];
 
 function findNoneDiagonalEntries() {
-  let gridSize = 0;
   const splitCoords = coordinates.map((coord) => {
     return coord.split(" -> ").map((subCoord) =>
       subCoord.split(",").map((stringCoord) => {
         const parsedCoord = parseInt(stringCoord, 10);
-        if (parsedCoord > gridSize) {
-          gridSize = parsedCoord;
-        }
         return parsedCoord;
       })
     );
   });
-  const validCoords = splitCoords.filter((coord) => {
-    if (coord[0][0] === coord[1][0]) return true;
-    if (coord[0][1] === coord[1][1]) return true;
-    return false;
-  });
-  return { gridSize, validCoords };
+
+  return { validCoords: splitCoords };
+}
+
+function getIncrement(num) {
+  if (!num) {
+    return num;
+  }
+  return num / Math.abs(num);
 }
 
 function generatePathCoords(coords) {
   const firstIndex = Math.abs(coords[0][0] - coords[1][0]);
   const secondIndex = Math.abs(coords[0][1] - coords[1][1]);
-  const indexToIterate = firstIndex > secondIndex ? 0 : 1;
-  const realDiff = coords[1][indexToIterate] - coords[0][indexToIterate];
+  const largestDiff = firstIndex > secondIndex ? firstIndex : secondIndex;
+  const path = [coords[0]];
+  const endPointFirstIndex = coords[1][0];
+  const endPointSecondIndex = coords[1][1];
 
-  const path = [[coords[0][0], coords[0][1]]];
-  for (let index = 0; index < Math.abs(realDiff); index++) {
+  for (let index = 0; index < largestDiff; index++) {
     const lastPath = path[path.length - 1];
-    const currentVal = lastPath[indexToIterate];
-    const valueToAdd = currentVal + realDiff / Math.abs(realDiff);
-    const newEntry = [...lastPath];
-    newEntry[indexToIterate] = valueToAdd;
+    const firstIndexRealDiff = endPointFirstIndex - lastPath[0];
+    const secondIndexRealDiff = endPointSecondIndex - lastPath[1];
+
+    const firstIndexIncrement = getIncrement(firstIndexRealDiff);
+    const secondIndexIncrement = getIncrement(secondIndexRealDiff);
+    const newZeroIndex = lastPath[0] + firstIndexIncrement;
+    const newFirstIndex = lastPath[1] + secondIndexIncrement;
+
+    const newEntry = [newZeroIndex, newFirstIndex];
+
     path.push(newEntry);
   }
   return path;
@@ -555,13 +561,12 @@ function generatePathCoords(coords) {
 
 function printPath() {
   const results = {};
-  const { gridSize, validCoords } = findNoneDiagonalEntries();
-  const hitTable = [];
+  const { validCoords } = findNoneDiagonalEntries();
   const allCoords = validCoords.map((cordSet) => {
     return generatePathCoords(cordSet);
   });
 
-  const mergedArrays = [].concat.apply([], allCoords).map((value) => {
+  [].concat.apply([], allCoords).map((value) => {
     if (!results[value.toString()]) {
       results[value.toString()] = 0;
     }
@@ -575,4 +580,5 @@ function printPath() {
   });
   return filteredResults.length;
 }
+// printPath();
 console.log(`printPath(): `, printPath());
