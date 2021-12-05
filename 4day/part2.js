@@ -650,17 +650,18 @@ function splitGrids() {
 }
 
 function findWinningGrid() {
-  let result;
+  let gridCallHistory = [];
+  let results = [];
   const formattedGrids = splitGrids();
 
   for (let i = 4; i < callOrder.length; i += 1) {
-    if (result) return result;
     // const i = 5;
     const calledNos = callOrder.slice(0, i);
     const lastCalled = calledNos[calledNos.length - 1];
     // loop for call order
     for (let r = 0; r < formattedGrids.length; r += 1) {
       const grid = formattedGrids[r];
+
       // looping grids
       for (let t = 0; t < 5; t += 1) {
         // looping rows
@@ -678,18 +679,29 @@ function findWinningGrid() {
           (columnItem) => calledNos.indexOf(columnItem) !== -1
         );
         if (successRow.length === 5 || successColumn.length === 5) {
+          gridCallHistory.push(r);
+
           const passingValues =
             successRow.length === 5 ? successRow : successColumn;
 
-          result = { grid, row: passingValues, lastCalled, calledNos };
+          results.push({ grid, row: passingValues, lastCalled, calledNos });
         }
       }
     }
   }
+
+  const reducedGrid = gridCallHistory.filter(function (item, pos) {
+    return gridCallHistory.indexOf(item) == pos;
+  });
+
+  const resultData =
+    results[gridCallHistory.indexOf(reducedGrid[reducedGrid.length - 1])];
+
+  return resultData;
 }
 
 function sumNumbers() {
-  const { grid, row, lastCalled, calledNos } = findWinningGrid();
+  const { grid, lastCalled, calledNos } = findWinningGrid();
 
   const filteredGrid = grid
     .map((gridRow) => {
