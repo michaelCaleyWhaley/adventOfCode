@@ -65,17 +65,16 @@ const horPos = [
   1267, 418, 730, 217, 1198, 859,
 ];
 
-// const horPos = [16, 1, 2, 0, 4, 2, 7, 1, 2, 14];
-
-function mean(numbers) {
-  return Math.round(numbers.reduce((a, b) => a + b, 0) / numbers.length);
+function mean(isCeil, numbers) {
+  if (isCeil) {
+    return Math.ceil(numbers.reduce((a, b) => a + b, 0) / numbers.length);
+  }
+  return Math.floor(numbers.reduce((a, b) => a + b, 0) / numbers.length);
 }
 
-function moveCrabs() {
-  const target = mean(horPos);
-
+function moveCrabs(isCeil, numbers) {
+  const target = mean(isCeil, numbers);
   let total = 0;
-
   for (let i = 0; i < horPos.length; i++) {
     const element = horPos[i];
     const diff = Math.abs(element - target);
@@ -85,9 +84,14 @@ function moveCrabs() {
     }
     total += runningTotal;
   }
-
-  console.log(`total: `, total);
+  return total;
 }
-moveCrabs();
 
-// 99788435
+function compareAnswers() {
+  const ceil = moveCrabs(true, horPos);
+  const floor = moveCrabs(false, horPos);
+  const lowestAnswer = ceil < floor ? ceil : floor;
+  return lowestAnswer;
+}
+
+console.log(`compareAnswers(): `, compareAnswers());
